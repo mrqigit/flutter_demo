@@ -149,7 +149,7 @@ class DragPage extends StatelessWidget {
           ),
         );
       },
-      onAcceptWithDetails: (detail)=> viewModel.onAcceptWithDetails.run,
+      onAcceptWithDetails: (detail)=> viewModel.onAcceptWithDetails.run({'item': detail.data, 'target': item}),
     );
   }
 }

@@ -18,19 +18,25 @@ class DragViewModel extends ChangeNotifier {
 
   final DragRepository repository = DragRepository();
 
-  late CommandArgument<void, DragTargetDetails> onAcceptWithDetails;
+  late CommandArgument<void, Map> onAcceptWithDetails;
   late CommandAction<void> randomIndex;
   late CommandAction<void> callRefresh;
   late List<DragModel> dataSource;
   late List<DragModel> activitySource;
 
-  Future<Result<void>> _onAcceptWithDetails(DragTargetDetails details) async {
-    if (details.data is! DragModel) {
+  Future<Result<void>> _onAcceptWithDetails(Map details) async {
+    final data = details['item'];
+    final target = details['target'];
+    if (data is! DragModel) {
       return Result.fail(Exception('data error'));
     }
-    final index = dataSource.indexWhere(
-      (item) => item.id == (details.data as DragModel).id,
-    );
+    if (target is! DragModel) {
+      return Result.fail(Exception('target error'));
+    }
+    if ((data == target) == false) {
+      return Result.fail(Exception('data != target'));
+    }
+    final index = dataSource.indexWhere((item) => item.id == target.id);
     if (index > dataSource.length - 1) {
       return Result.fail(Exception('index error'));
     }
