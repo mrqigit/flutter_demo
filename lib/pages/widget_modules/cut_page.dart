@@ -1,7 +1,14 @@
+import 'dart:io';
+
+import 'package:demo/utils/file_util.dart';
+import 'package:demo/utils/image_util.dart';
+import 'package:demo/utils/qiniu_util.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:qiniu_flutter_sdk/qiniu_flutter_sdk.dart';
 
 class CutPage extends StatefulWidget {
   const CutPage({super.key});
@@ -130,7 +137,47 @@ class _CutPageState extends State<CutPage> {
                   },
                   child: const Text("Cut"),
                 ),
-                ElevatedButton(onPressed: () {}, child: const Text("Copy")),
+                ElevatedButton(
+                  onPressed: () async {
+                    // 创建 storage 对象
+                    final storage = Storage();
+                    // 创建 Controller 对象
+                    final putController = PutController();
+                    // 添加任务进度监听
+                    putController.addProgressListener((progress) {
+                      print('任务进度变化：已发送：$progress');
+                    });
+
+                    // 添加任务状态监听
+                    putController.addStatusListener((StorageStatus status) {
+                      print('状态变化: 当前任务状态：$status');
+                    });
+
+                    // 使用 storage 的 putFile 对象进行文件上传
+                    final file = await ImageUtil.getFilePath(
+                      _splitImages.first,
+                    );
+                    if (file == null) {
+                      return;
+                    }
+                    final token = await QiniuUtil.getToken(
+                      _splitImages.first,
+                      file.name,
+                    );
+
+                    print(token);
+
+                    storage.putFile(
+                      file,
+                      token,
+                      options: PutOptions(
+                        controller: putController,
+                        key: 'mrqilibary',
+                      ),
+                    );
+                  },
+                  child: const Text("Copy"),
+                ),
                 ElevatedButton(onPressed: () {}, child: const Text("Paste")),
                 ElevatedButton(onPressed: () {}, child: const Text("Delete")),
               ],
