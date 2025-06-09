@@ -66,15 +66,29 @@ class DragPage extends StatelessWidget {
       feedback: Container(
         width: 100,
         height: 100,
-        color: Colors.grey,
+        color: Colors.red,
         alignment: Alignment.center,
-        child: Text(
-          item.title,
-          style: TextStyle(
-            color: Color(0xff86909C),
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              item.title,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '标号${item.id}',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 8,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
         ),
       ),
       child: Container(
@@ -149,7 +163,11 @@ class DragPage extends StatelessWidget {
           ),
         );
       },
-      onAcceptWithDetails: (detail)=> viewModel.onAcceptWithDetails.run({'item': detail.data, 'target': item}),
+      onAcceptWithDetails:
+          (detail) => viewModel.onAcceptWithDetails.run({
+            'item': detail.data,
+            'target': item,
+          }),
     );
   }
 }
